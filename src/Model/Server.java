@@ -35,13 +35,14 @@ public class Server extends Thread {
             Writer writer = new OutputStreamWriter(outStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
             client = bufferedWriter;
-            message = buffReader.readLine();
-
-            while(!"Sair".equalsIgnoreCase(message) && message != null)
+            name = message = buffReader.readLine();
+            System.out.println(message);
+            while(message != null)
             {
                 message = buffReader.readLine();
                 System.out.println(message);
             }
+            System.out.println("Cliente Desconectou-se!");
 
         }catch (Exception e) {
             e.printStackTrace();
