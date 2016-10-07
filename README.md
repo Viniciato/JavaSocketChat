@@ -1,4 +1,4 @@
-# Chat with Socket Java!
+# Server of Chat with Socket Java!
 
 Chat com socket em java para defesa de trabalho final da disciplina de sistemas distribuidos UTFPR, sistema desenvolvido por `Vinicius Nadin` e `Michael Vornes`.
 
