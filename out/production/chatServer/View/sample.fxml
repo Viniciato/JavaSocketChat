@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="296.0" prefWidth="421.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.Controller">
+   <children>
+      <Label alignment="CENTER" layoutX="149.0" layoutY="34.0" prefHeight="27.0" prefWidth="139.0" text="ChatServer!" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="19.0" />
+         </font>
+      </Label>
+      <Button layoutX="135.0" layoutY="221.0" mnemonicParsing="false" onAction="#initServer" prefHeight="27.0" prefWidth="167.0" text="INICIAR" />
+      <TextField fx:id="ipField" alignment="CENTER" layoutX="135.0" layoutY="82.0" promptText="IP SERVIDOR" />
+      <TextField fx:id="portField" alignment="CENTER" layoutX="135.0" layoutY="116.0" promptText="PORTA SERVIDOR" />
+      <TextField fx:id="nameField" alignment="CENTER" layoutX="135.0" layoutY="149.0" promptText="SEU NOME" />
+      <TextField fx:id="passField" alignment="CENTER" layoutX="135.0" layoutY="182.0" promptText="SENHA DE ACESSO" />
+   </children>
+</AnchorPane>
