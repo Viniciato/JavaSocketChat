@@ -14,9 +14,6 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * Created by Nadin on 9/29/16.
- */
 public class Server extends Thread {
     private BufferedWriter client;
     private ServerSocket server;
