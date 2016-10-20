@@ -1,13 +1,9 @@
 package Model;
 
-
-
-import Controller.ChatWindowController;
-import javafx.fxml.FXML;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 import java.io.*;
@@ -17,7 +13,7 @@ import java.net.Socket;
 /**
  * Created by Nadin on 9/29/16.
  */
-public class Server extends Thread {
+public class Server{
     private BufferedWriter client;
     private ServerSocket server;
     private Socket connection;
@@ -47,7 +43,7 @@ public class Server extends Thread {
             client = bufferedWriter;
             name = message = buffReader.readLine();
             System.out.println(message);
-//            openChatWindow();
+
             while(message != null)
             {
                 message = buffReader.readLine();
@@ -60,19 +56,4 @@ public class Server extends Thread {
 
         }
     }
-
-//    public void openChatWindow() throws IOException{
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/chatWindow.fxml"));
-//        Parent home_page_parent = loader.load();
-//
-//        ChatWindowController controller = loader.getController();
-////        controller.setParams(buffeWriter, nameLabel.getText());
-//
-//        Scene home_page_scene = new Scene(home_page_parent);
-//        Stage main_stage = new Stage();
-//        main_stage.setScene(home_page_scene);
-//        main_stage.setResizable(false);
-//        main_stage.setMaximized(false);
-//        main_stage.show();
-//    }
 }
