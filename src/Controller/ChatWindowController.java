@@ -13,6 +13,6 @@ public class ChatWindowController {
     @FXML private TextField textArea;
 
     @FXML void sendMessage(ActionEvent event) {
-        
+
     }
 }
