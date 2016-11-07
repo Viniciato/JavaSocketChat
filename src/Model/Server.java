@@ -1,24 +1,16 @@
 package Model;
 
-import javafx.concurrent.Task;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import Controller.Controller;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-<<<<<<< HEAD
 /**
  * Created by Nadin on 9/29/16.
  */
-public class Server{
-=======
-public class Server extends Thread {
->>>>>>> 60170f7d7504b8abcbeae88950542e0abcd7e0f2
-    private BufferedWriter client;
+public final class Server extends Thread {
+
     private ServerSocket server;
     private Socket connection;
     private String name;
@@ -26,57 +18,48 @@ public class Server extends Thread {
     private InputStreamReader inputStreamReader;
     private BufferedReader buffReader;
 
-    public Server(Socket connection, ServerSocket server){
-        this.connection = connection;
-        this.server = server;
-        try{
+    public Server(Socket connection, ServerSocket server) {
+        try {
+            this.connection = connection;
+            this.server = server;
             inputStream = this.connection.getInputStream();
             inputStreamReader = new InputStreamReader(inputStream);
             buffReader = new BufferedReader(inputStreamReader);
-        }catch (IOException e){
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
 
-    public void run(){
-        try{
+    public void run() {
+        try {
             String message;
-            OutputStream outStream =  this.connection.getOutputStream();
+            OutputStream outStream = this.connection.getOutputStream();
             Writer writer = new OutputStreamWriter(outStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            client = bufferedWriter;
+            Controller.clients.add(bufferedWriter);
             name = message = buffReader.readLine();
-            System.out.println(message);
 
-            while(message != null)
-            {
+            while (message != null) {
                 message = buffReader.readLine();
-                System.out.println(message);
+                sendToAll(bufferedWriter, message);
             }
+            Controller.clients.remove(bufferedWriter);
             System.out.println("Cliente Desconectou-se!");
-
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
         }
     }
-<<<<<<< HEAD
-}
-=======
 
-//    public void openChatWindow() throws IOException{
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/chatWindow.fxml"));
-//        Parent home_page_parent = loader.load();
-//
-//        ChatWindowController controller = loader.getController();
-////        controller.setParams(buffeWriter, nameLabel.getText());
-//
-//        Scene home_page_scene = new Scene(home_page_parent);
-//        Stage main_stage = new Stage();
-//        main_stage.setScene(home_page_scene);
-//        main_stage.setResizable(false);
-//        main_stage.setMaximized(false);
-//        main_stage.show();
-//    }
+    public void sendToAll(BufferedWriter bwSaida, String msg) throws  IOException
+    {
+        BufferedWriter bwS;
+        for(BufferedWriter bw : Controller.clients){
+            bwS = (BufferedWriter)bw;
+            if(!(bwSaida == bwS)){
+                bw.write(name + " -> " + msg+"\r\n");
+                bw.flush();
+            }
+        }
+    }
 }
->>>>>>> 60170f7d7504b8abcbeae88950542e0abcd7e0f2
