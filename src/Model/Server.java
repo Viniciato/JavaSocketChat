@@ -5,6 +5,7 @@ import Controller.Controller;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 
 /**
  * Created by Nadin on 9/29/16.
@@ -38,9 +39,20 @@ public final class Server extends Thread {
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
             Controller.clients.add(bufferedWriter);
             name = message = buffReader.readLine();
+            Controller.testes.add(new Client(0, name));
+            System.out.println(name);
 
             while (message != null) {
                 message = buffReader.readLine();
+                System.out.println(message);
+                if(message.equals("get")){
+                    System.out.println("GETT!!!");
+                    OutputStream outputStream = connection.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+                    oos.writeObject(Controller.testes);
+                    oos.flush();
+                }
+                System.out.println(message);
                 sendToAll(bufferedWriter, message);
             }
             Controller.clients.remove(bufferedWriter);

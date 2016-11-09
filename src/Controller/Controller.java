@@ -1,5 +1,6 @@
 package Controller;
 
+import Model.Client;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +12,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import Model.Server;
 
@@ -19,6 +21,7 @@ public class Controller {
     @FXML private TextField portField;
     @FXML private Button startButton;
     public static ArrayList<BufferedWriter> clients = new ArrayList<>();
+    public static ArrayList<Client> testes = new ArrayList<>();
 
     @FXML void initServer(ActionEvent event){
         Task task = new Task() {
