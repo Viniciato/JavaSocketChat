@@ -18,6 +18,7 @@ public final class Server extends Thread {
     private InputStream inputStream;
     private InputStreamReader inputStreamReader;
     private BufferedReader buffReader;
+    private Conversation conversation;
 
     public Server(Socket connection, ServerSocket server) {
         try {
@@ -37,25 +38,28 @@ public final class Server extends Thread {
             OutputStream outStream = this.connection.getOutputStream();
             Writer writer = new OutputStreamWriter(outStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
-            Controller.clients.add(bufferedWriter);
             name = message = buffReader.readLine();
-            Controller.testes.add(new Client(0, name));
+            conversation = new Conversation(name, Controller.getRoom());
+            Controller.cvs.add(conversation);
             System.out.println(name);
 
             while (message != null) {
                 message = buffReader.readLine();
                 System.out.println(message);
-                if(message.equals("get")){
+                if(message.contains("9783940")){
                     System.out.println("GETT!!!");
                     OutputStream outputStream = connection.getOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-                    oos.writeObject(Controller.testes);
+                    oos.writeObject(Controller.cvs);
                     oos.flush();
                 }
-                System.out.println(message);
-                sendToAll(bufferedWriter, message);
+                else{
+                    System.out.println(message);
+                    sendToAll(bufferedWriter, message);
+                }
             }
-            Controller.clients.remove(bufferedWriter);
+            Controller.cvs.remove(conversation);
+
             System.out.println("Cliente Desconectou-se!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,13 +69,25 @@ public final class Server extends Thread {
 
     public void sendToAll(BufferedWriter bwSaida, String msg) throws  IOException
     {
-        BufferedWriter bwS;
-        for(BufferedWriter bw : Controller.clients){
-            bwS = (BufferedWriter)bw;
-            if(!(bwSaida == bwS)){
-                bw.write(name + " -> " + msg+"\r\n");
-                bw.flush();
+        for (int i = 0; i < Controller.cvs.size(); i++) {
+            Conversation c = Controller.cvs.get(i);
+            if(c.getRoom() == conversation.getRoom() && c.getClientName() != conversation.getClientName()){
+                c.addMessage(msg+"\r\n");
+                System.out.println(c.getClientName());
+                bwSaida.write(name + " -> " + msg+"\r\n");
+                bwSaida.flush();
             }
         }
+
+//        BufferedWriter bwS;
+//        for (int i = 0; i < Controller.cvs.size(); i++) {
+//            BufferedWriter bw = Controller.cvs.get(i).getBfW();
+//            bwS = (BufferedWriter) bw;
+//            if(!(bwSaida == bwS) && conversation.getRoom() ==){
+//                bw.write(name + " -> " + msg+"\r\n");
+//                bw.flush();
+//            }
+//        }
+
     }
 }

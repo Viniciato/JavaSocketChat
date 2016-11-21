@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.Client;
+import Model.Conversation;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,7 +13,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Random;
 
 import Model.Server;
 
@@ -20,8 +21,23 @@ public class Controller {
     @FXML private TextField ipField;
     @FXML private TextField portField;
     @FXML private Button startButton;
-    public static ArrayList<BufferedWriter> clients = new ArrayList<>();
-    public static ArrayList<Client> testes = new ArrayList<>();
+    public static ArrayList<Conversation> cvs = new ArrayList<>();
+    private static ArrayList<Integer> rooms = new ArrayList<>();
+
+    public static int getRoom(){
+        boolean verify = false;
+        int number = -1;
+        while (!verify){
+            Random gen = new Random();
+            number = gen.nextInt(10);
+            if(!rooms.contains(number)){
+                rooms.add(number);
+                verify = true;
+            }
+        }
+        return number;
+    }
+
 
     @FXML void initServer(ActionEvent event){
         Task task = new Task() {
@@ -56,5 +72,6 @@ public class Controller {
         t.setDaemon(true);
         t.start();
     }
+
 
 }

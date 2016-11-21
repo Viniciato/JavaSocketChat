@@ -1,30 +1,28 @@
 package Model;
 
 import java.io.Serializable;
-import java.net.Socket;
 
 /**
  * Created by Nadin on 08/11/16.
  */
 public class Client implements Serializable{
-    private int nRoom;
+    private int room;
     private String name;
 
 
-    public Client(int nRoom, String name){
-        this.nRoom = nRoom;
+    public Client(int room, String name){
+        this.room = room;
         this.name = name;
 
     }
 
-    public int getnRoom() {
-        return nRoom;
+    public String getRoom() {
+        return String.valueOf(room);
     }
 
-    public void setnRoom(int nRoom) {
-        this.nRoom = nRoom;
+    public void setRoom(int room) {
+        this.room = room;
     }
-
 
 
     public void setName(String name) {
