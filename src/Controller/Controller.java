@@ -1,6 +1,6 @@
 package Controller;
 
-import Model.Client;
+import Model.ConnectionInfo;
 import Model.Conversation;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -8,7 +8,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 
-import java.io.BufferedWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -21,12 +20,12 @@ public class Controller {
     @FXML private TextField ipField;
     @FXML private TextField portField;
     @FXML private Button startButton;
-    public static ArrayList<Conversation> cvs = new ArrayList<>();
     private static ArrayList<Integer> rooms = new ArrayList<>();
+    public static ArrayList<ConnectionInfo> saves = new ArrayList<>();
 
     public static int getRoom(){
         boolean verify = false;
-        int number = -1;
+        int number = 100;
         while (!verify){
             Random gen = new Random();
             number = gen.nextInt(10);

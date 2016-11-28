@@ -5,7 +5,7 @@ import Controller.Controller;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Created by Nadin on 9/29/16.
@@ -18,6 +18,7 @@ public final class Server extends Thread {
     private InputStream inputStream;
     private InputStreamReader inputStreamReader;
     private BufferedReader buffReader;
+    private ConnectionInfo connectionInfo;
     private Conversation conversation;
 
     public Server(Socket connection, ServerSocket server) {
@@ -39,26 +40,57 @@ public final class Server extends Thread {
             Writer writer = new OutputStreamWriter(outStream);
             BufferedWriter bufferedWriter = new BufferedWriter(writer);
             name = message = buffReader.readLine();
-            conversation = new Conversation(name, Controller.getRoom());
-            Controller.cvs.add(conversation);
+            if(name.equals("997654")){
+                conversation = new Conversation("Atendente", 100);
+                name="Atendente";
+            }
+            else
+                conversation = new Conversation(name, Controller.getRoom());
+
+            ConnectionInfo cInfo = new ConnectionInfo(bufferedWriter, conversation);
+            Controller.saves.add(cInfo);
             System.out.println(name);
 
             while (message != null) {
                 message = buffReader.readLine();
+                if(message!=null){
                 System.out.println(message);
-                if(message.contains("9783940")){
-                    System.out.println("GETT!!!");
-                    OutputStream outputStream = connection.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-                    oos.writeObject(Controller.cvs);
-                    oos.flush();
+                message = message.replace("[", "");
+                message = message.replace("]", "");
+                System.out.println(message);
+                String[] are = message.split(",");
+                System.out.println(are[0]);
+                if (message!= null && are[0].contains("9999")){
+                    sendToAll(bufferedWriter, are);
+                    message="";
+                }else if(message!= null &&  are[0].contains("8888")){
+                    if(are!= null && are[1].contains("9783940")){
+                        System.out.println("GETT!!!");
+                        OutputStream outputStream = connection.getOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+                        ArrayList<Conversation> conversations = new ArrayList<>();
+                        for (ConnectionInfo coInf : Controller.saves){
+                            conversations.add(coInf.getConv());
+                        }
+                        oos.writeObject(conversations);
+                        oos.flush();
+                    }
+                    else if(are!= null && are[1].contains("chSt"))
+                    {
+
+                        String room = are[2];
+                        System.out.println(room.toString().replace(" ",""));
+                        room = room.trim();
+                        for (ConnectionInfo conI : Controller.saves)
+                            if (conI.getConv().getRoom() == conversation.getRoom() && conI.getConv().getClientName()==conversation.getClientName()) {
+                                conI.getConv().setRoom(Integer.valueOf(room));
+                                conversation.setRoom(Integer.valueOf(room));
+                            }
+                    }
                 }
-                else{
-                    System.out.println(message);
-                    sendToAll(bufferedWriter, message);
                 }
             }
-            Controller.cvs.remove(conversation);
+            Controller.saves.remove(cInfo);
 
             System.out.println("Cliente Desconectou-se!");
         } catch (Exception e) {
@@ -67,27 +99,16 @@ public final class Server extends Thread {
         }
     }
 
-    public void sendToAll(BufferedWriter bwSaida, String msg) throws  IOException
+    public void sendToAll(BufferedWriter bwSaida, String[] msg) throws  IOException
     {
-        for (int i = 0; i < Controller.cvs.size(); i++) {
-            Conversation c = Controller.cvs.get(i);
-            if(c.getRoom() == conversation.getRoom() && c.getClientName() != conversation.getClientName()){
-                c.addMessage(msg+"\r\n");
-                System.out.println(c.getClientName());
-                bwSaida.write(name + " -> " + msg+"\r\n");
-                bwSaida.flush();
+        conversation.addMessage(msg[1].toString()+"\r\n");
+        for (int i = 0; i < Controller.saves.size(); i++) {
+            ConnectionInfo c = Controller.saves.get(i);
+            if(c.getConv().getRoom() == conversation.getRoom() && !c.getConv().getClientName().equals(conversation.getClientName())){
+                c.getBuf().write(name + " -> " +msg[1].toString()+"\r\n");
+                c.getConv().addMessage(msg[1].toString()+"\r\n");
+                c.getBuf().flush();
             }
         }
-
-//        BufferedWriter bwS;
-//        for (int i = 0; i < Controller.cvs.size(); i++) {
-//            BufferedWriter bw = Controller.cvs.get(i).getBfW();
-//            bwS = (BufferedWriter) bw;
-//            if(!(bwSaida == bwS) && conversation.getRoom() ==){
-//                bw.write(name + " -> " + msg+"\r\n");
-//                bw.flush();
-//            }
-//        }
-
     }
 }
