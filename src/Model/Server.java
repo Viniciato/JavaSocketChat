@@ -77,7 +77,6 @@ public final class Server extends Thread {
                     }
                     else if(are!= null && are[1].contains("chSt"))
                     {
-
                         String room = are[2];
                         System.out.println(room.toString().replace(" ",""));
                         room = room.trim();
@@ -87,11 +86,24 @@ public final class Server extends Thread {
                                 conversation.setRoom(Integer.valueOf(room));
                             }
                     }
+                    else if(are!=null && are[1].contains("7777")){
+                        System.out.println("Get History");
+                        String room = are[2];
+                        System.out.println(room.toString().replace(" ",""));
+                        room = room.trim();
+                        ArrayList<String> history = new ArrayList<>();
+                        for (ConnectionInfo conI : Controller.saves)
+                            if (conI.getConv().getRoom() == conversation.getRoom() && conI.getConv().getClientName()==conversation.getClientName())
+                                history = conI.getConv().getHistory();
+                        OutputStream outputStream = connection.getOutputStream();
+                        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+                        oos.writeObject(history);
+                        oos.flush();
+                    }
                 }
                 }
             }
-            Controller.saves.remove(cInfo);
-
+            Controller.saves.get(Controller.saves.indexOf(cInfo)).getConv().setStatus("Finalizado");
             System.out.println("Cliente Desconectou-se!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -101,14 +113,15 @@ public final class Server extends Thread {
 
     public void sendToAll(BufferedWriter bwSaida, String[] msg) throws  IOException
     {
-        conversation.addMessage(msg[1].toString()+"\r\n");
+        conversation.addMessage(name + " -> " +msg[1].toString()+"\r\n");
         for (int i = 0; i < Controller.saves.size(); i++) {
             ConnectionInfo c = Controller.saves.get(i);
             if(c.getConv().getRoom() == conversation.getRoom() && !c.getConv().getClientName().equals(conversation.getClientName())){
                 c.getBuf().write(name + " -> " +msg[1].toString()+"\r\n");
-                c.getConv().addMessage(msg[1].toString()+"\r\n");
+                c.getConv().addMessage(name + " -> " +msg[1].toString()+"\r\n");
                 c.getBuf().flush();
             }
         }
     }
+
 }
