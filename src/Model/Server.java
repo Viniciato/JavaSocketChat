@@ -54,53 +54,47 @@ public final class Server extends Thread {
             while (message != null) {
                 message = buffReader.readLine();
                 if(message!=null){
-                System.out.println(message);
-                message = message.replace("[", "");
-                message = message.replace("]", "");
-                System.out.println(message);
-                String[] are = message.split(",");
-                System.out.println(are[0]);
-                if (message!= null && are[0].contains("9999")){
-                    sendToAll(bufferedWriter, are);
-                    message="";
-                }else if(message!= null &&  are[0].contains("8888")){
-                    if(are!= null && are[1].contains("9783940")){
-                        System.out.println("GETT!!!");
-                        OutputStream outputStream = connection.getOutputStream();
-                        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-                        ArrayList<Conversation> conversations = new ArrayList<>();
-                        for (ConnectionInfo coInf : Controller.saves){
-                            conversations.add(coInf.getConv());
-                        }
-                        oos.writeObject(conversations);
-                        oos.flush();
-                    }
-                    else if(are!= null && are[1].contains("chSt"))
-                    {
-                        String room = are[2];
-                        System.out.println(room.toString().replace(" ",""));
-                        room = room.trim();
-                        for (ConnectionInfo conI : Controller.saves)
-                            if (conI.getConv().getRoom() == conversation.getRoom() && conI.getConv().getClientName()==conversation.getClientName()) {
-                                conI.getConv().setRoom(Integer.valueOf(room));
-                                conversation.setRoom(Integer.valueOf(room));
+                    message = message.replace("[", "");
+                    message = message.replace("]", "");
+                    String[] are = message.split(",");
+                    if (are[0].contains("9999")){
+                        sendToAll(bufferedWriter, are);
+                        message="";
+                    }else if(are[0].contains("8888")){
+                        if(are[1].contains("9783940")){
+                            OutputStream outputStream = connection.getOutputStream();
+                            ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+                            ArrayList<Conversation> conversations = new ArrayList<>();
+                            for (ConnectionInfo coInf : Controller.saves){
+                                conversations.add(coInf.getConv());
                             }
+                            oos.writeObject(conversations);
+                            oos.flush();
+                        }
+                        else if(are[1].contains("chSt"))
+                        {
+                            String room = are[2];
+                            room = room.trim();
+                            for (ConnectionInfo conI : Controller.saves)
+                                if (conI.getConv().getRoom() == conversation.getRoom() && conI.getConv().getClientName()==conversation.getClientName()) {
+                                    conI.getConv().setRoom(Integer.valueOf(room));
+                                    conversation.setRoom(Integer.valueOf(room));
+                                }
+                        }
+                        else if(are!=null && are[1].contains("7777")){
+                            String room = are[2];
+                            System.out.println(room.toString().replace(" ",""));
+                            room = room.trim();
+                            ArrayList<String> history = new ArrayList<>();
+                            for (ConnectionInfo conI : Controller.saves)
+                                if (conI.getConv().getRoom() == Integer.valueOf(room) && conI.getConv().getClientName()!=conversation.getClientName())
+                                    history = conI.getConv().getHistory();
+                            OutputStream outputStream = connection.getOutputStream();
+                            ObjectOutputStream oos = new ObjectOutputStream(outputStream);
+                            oos.writeObject(history);
+                            oos.flush();
+                        }
                     }
-                    else if(are!=null && are[1].contains("7777")){
-                        System.out.println("Get History");
-                        String room = are[2];
-                        System.out.println(room.toString().replace(" ",""));
-                        room = room.trim();
-                        ArrayList<String> history = new ArrayList<>();
-                        for (ConnectionInfo conI : Controller.saves)
-                            if (conI.getConv().getRoom() == conversation.getRoom() && conI.getConv().getClientName()==conversation.getClientName())
-                                history = conI.getConv().getHistory();
-                        OutputStream outputStream = connection.getOutputStream();
-                        ObjectOutputStream oos = new ObjectOutputStream(outputStream);
-                        oos.writeObject(history);
-                        oos.flush();
-                    }
-                }
                 }
             }
             Controller.saves.get(Controller.saves.indexOf(cInfo)).getConv().setStatus("Finalizado");
@@ -113,7 +107,6 @@ public final class Server extends Thread {
 
     public void sendToAll(BufferedWriter bwSaida, String[] msg) throws  IOException
     {
-        conversation.addMessage(name + " -> " +msg[1].toString()+"\r\n");
         for (int i = 0; i < Controller.saves.size(); i++) {
             ConnectionInfo c = Controller.saves.get(i);
             if(c.getConv().getRoom() == conversation.getRoom() && !c.getConv().getClientName().equals(conversation.getClientName())){
@@ -121,6 +114,8 @@ public final class Server extends Thread {
                 c.getConv().addMessage(name + " -> " +msg[1].toString()+"\r\n");
                 c.getBuf().flush();
             }
+            if(c.getConv().getRoom() == conversation.getRoom() && c.getConv().getClientName().equals(conversation.getClientName()))
+                c.getConv().addMessage(name + " -> " +msg[1].toString()+"\r\n");
         }
     }
 
